@@ -30,7 +30,7 @@ print(network.lines)
 # Inserimento PWM
 # network.add('Line', 'PWM', bus0='My bus 2', bus1='DC-bus', x=0.00000, r=0.0000000000000, length=10)
 # network.add('Link', 'PWM', bus0='My bus 2', bus1='DC-bus', p_nom=1000, efficiency=1, marginal_cos=0, p_min_pu=-1)
-network.add('TransformerType', 'Tr2', v_nom_0=20, v_nom_1=6, s_nom=300, f_nom=50, vsc=0, vscr=0, pfe=0, i0=0)
+network.add('TransformerType', 'Tr2', v_nom_0=20, v_nom_1=6.0622, s_nom=300, f_nom=50, vsc=1e-12)
 network.add('Transformer', 'PWM', bus0='My bus 2', bus1='DC-bus', x=0.01, r=0.01, model='t', type='Tr2')
 
 print('\nLinee')
@@ -73,4 +73,3 @@ print(network.buses_t.v_mag_pu)
 # print(network.loads['p_set']['My load'])
 #
 # # network.loads_t['p_set']['My load']['now'] = 10
-
