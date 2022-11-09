@@ -2,6 +2,7 @@ import pypsa
 import numpy as np
 import pandas as pd
 
+
 network = pypsa.Network()
 
 network.add("Bus", "MV bus", v_nom=20,
@@ -77,3 +78,5 @@ print(network.buses_t.p)
 print(network.buses_t.v_mag_pu)
 
 print('\n\nP Generatore = ' + str(network.generators_t['p']['External Grid']['now']))
+
+
