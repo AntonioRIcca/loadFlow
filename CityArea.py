@@ -3,7 +3,8 @@ import numpy as np
 
 
 elements = dict()
-categories = ['AC-Bus', 'DC-Bus', 'PV', 'AC-Load', 'DC-Load', 'ExtGrid', 'BESS', 'Transformer', 'AC-Line', 'DC-Line']
+categories = ['AC-Bus', 'DC-Bus', 'PV', 'AC-Load', 'DC-Load', 'ExtGrid', 'BESS', 'Transformer', 'PWM', 'DC-DC-Conv',
+              'AC-Line', 'DC-Line']
 for cat in categories:
     elements[cat] = dict()
 
@@ -16,6 +17,8 @@ conv['DC-Load'] = 'loads'
 conv['ExtGrid'] = 'generators'
 conv['BESS'] = 'stores'
 conv['Transformer'] = 'transformers'
+conv['PWM'] = 'transformers'
+conv['DC-DC-Conv'] = 'transformers'
 conv['AC-Line'] = 'lines'
 conv['DC-Line'] = 'lines'
 
@@ -69,16 +72,41 @@ network.add(
     r=0.09
 )
 elements['AC-Line']['UG_Line'] = dict()
+network.add('TransformerType', 'TR_20-2', s_nom=0, f_nom=50, v_nom_0=20, v_nom_1=2, vsc=0.6, vscr=0.1, i0=0.1)
 
-network.add('Transformer', 'UG_TR1', bus0='UG_BB_20kV', bus1='UG_BB_2kV', s_nom=2, x=0.05916, r=0.01)
-network.add('Transformer', 'UG_TR2', bus0='UG_BB_20kV', bus1='UG_BB_2kV', s_nom=2, x=0.05916, r=0.01)
+network.add('TransformerType', 'myTr2',
+            f_nom=50,
+            s_nom=2,
+            v_nom_0=20,
+            v_nom_1=2,
+            vsc=6,
+            vscr=1,
+            # pfe=0.6,
+            i0=1.6,
+            # phase_shift=150,
+            # tap_side=0,
+            # tap_neutral=0,
+            # tap_min=-2,
+            # tap_max=2,
+            # tap_step=2.5,
+            )
+network.add('Transformer', 'UG_TR1', type='myTr2', bus0='UG_BB_20kV', bus1='UG_BB_2kV')
+
+# network.add('Transformer', 'UG_TR1', bus0='UG_BB_20kV', bus1='UG_BB_2kV', s_nom=2, x=0.05916, r=0.01, i0=0.016)
+# network.add('Transformer', 'UG_TR2', bus0='UG_BB_20kV', bus1='UG_BB_2kV', s_nom=2, x=0.05916, r=0.01)
 network.add('Transformer', 'UG_Serv_TR', bus0='UG_BB_2kV', bus1='UG_Serv_BB', s_nom=0.4, x=0.05916, r=0.01)
 network.add('Transformer', 'UG_PWM', bus0='UG_BB_2kV', bus1='UG_BB_LVDC', s_nom=0.8, x=1e-12, r=1e-12)
 network.add('Transformer', 'UGS_PWM', bus0='UG_BB_2kV', bus1='UGS_BB', s_nom=0.8, x=1e-12, r=1e-12)
 network.add('Transformer', 'UGS_PV_DC-DC-Conv', bus0='UGS_BB', bus1='UGS_PV_BB', s_nom=0.05, x=1e-12, r=1e-12)
 network.add('Transformer', 'UGS_BESS_DC-DC-Conv', bus0='UGS_BB', bus1='UGS_BESS_Node', s_nom=0.05, x=1e-12, r=1e-12)
-for e in ['UG_TR1', 'UG_TR2', 'UG_Serv_TR', 'UG_PWM', 'UGS_PWM', 'UGS_PV_DC-DC-Conv', 'UGS_BESS_DC-DC-Conv']:
+for e in ['UG_TR1',
+          # 'UG_TR2',
+          'UG_Serv_TR']:
     elements['Transformer'][e] = dict()
+for e in ['UG_PWM', 'UGS_PWM']:
+    elements['PWM'][e] = dict()
+for e in ['UGS_PV_DC-DC-Conv', 'UGS_BESS_DC-DC-Conv']:
+    elements['DC-DC-Conv'][e] = dict()
 
 network.add('Load', 'UG_Serv_AC-Load1', bus='UG_Serv_BB', p_set=0.08, q_set=0.03875)
 elements['AC-Load']['UG_Serv_AC-Load1'] = dict()
@@ -127,9 +155,9 @@ for cat in categories:
                 i = s / v / (3**0.5)
             else:
                 i = s / v
-            print(e + ':\tP = %.4f MW\tQ = %.4f MVA\tV = %.3f kV\ti = %.4f kA' % (p, q, v, i))
+            print(e + ':\tP = %.2f kW\tQ = %.2f kVA\tV = %.3f kV\ti = %.3f A' % (p*1000, q*1000, v, i*1000))
 
-    if cat in ['Transformer', 'AC-Line', 'DC-Line']:
+    if cat in ['Transformer', 'PWM', 'DC-DC-Conv', 'AC-Line', 'DC-Line']:
         for e in elements[cat].keys():
             bus0 = network.__getattribute__(conv[cat])['bus0'][e]
             p0 = network.__getattribute__(conv[cat] + '_t')['p0'][e]['now']
@@ -137,7 +165,7 @@ for cat in categories:
             s0 = (p0**2 + q0**2)**0.5
             v0 = network.__getattribute__('buses_t')['v_mag_pu'][bus0]['now'] *\
                 network.__getattribute__('buses')['v_nom'][bus0]
-            if cat in ['AC-Load', 'ExtGrid']:
+            if cat in ['AC-Load', 'Transformer', 'PWM']:
                 i0 = s0 / v0 / (3**0.5)
             else:
                 i0 = s0 / v0
@@ -148,10 +176,10 @@ for cat in categories:
             s1 = (p1**2 + q1**2)**0.5
             v1 = network.__getattribute__('buses_t')['v_mag_pu'][bus1]['now'] *\
                 network.__getattribute__('buses')['v_nom'][bus1]
-            if cat in ['AC-Load', 'ExtGrid']:
+            if cat in ['AC-Load', 'Transformer']:
                 i1 = s1 / v1 / (3**0.5)
             else:
                 i1 = s1 / v1
 
-            print(e + ':\tP0 = %.4f MW\tP1 = %.4f MW\tQ0 = %.4f MVA\tQ1 = %.4f MVA\tV0 = %.3f kV\tV1 = %.3f kV'
-                      '\ti0 = %.4f kA\ti1 = %.4f kA' % (p0, p1, q0, q1, v0, v1, i0, i1))
+            print(e + ':\tP0 = %.2f MW\tP1 = %.2f MW\tQ0 = %.2f MVA\tQ1 = %.2f MVA\tV0 = %.3f kV\tV1 = %.3f kV'
+                      '\ti0 = %.3f kA\ti1 = %.3f kA' % (p0*1000, p1*1000, q0*1000, q1*1000, v0, v1, i0*1000, i1*1000))
