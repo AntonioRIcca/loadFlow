@@ -72,35 +72,19 @@ network.add(
     r=0.09
 )
 elements['AC-Line']['UG_Line'] = dict()
-network.add('TransformerType', 'TR_20-2', s_nom=0, f_nom=50, v_nom_0=20, v_nom_1=2, vsc=0.6, vscr=0.1, i0=0.1)
+network.add('TransformerType', 'TR_20-2', f_nom=50, s_nom=2, v_nom_0=20, v_nom_1=2, vsc=6, vscr=1, i0=1.6)
+network.add('TransformerType', 'TR_2-0.4', f_nom=50, s_nom=0.4, v_nom_0=2, v_nom_1=0.4, vsc=6, vscr=1, i0=1.6)
+# network.add('Transformer', 'UG_TR1', type='TR_20-2', bus0='UG_BB_20kV', bus1='UG_BB_2kV')
 
-network.add('TransformerType', 'myTr2',
-            f_nom=50,
-            s_nom=2,
-            v_nom_0=20,
-            v_nom_1=2,
-            vsc=6,
-            vscr=1,
-            # pfe=0.6,
-            i0=1.6,
-            # phase_shift=150,
-            # tap_side=0,
-            # tap_neutral=0,
-            # tap_min=-2,
-            # tap_max=2,
-            # tap_step=2.5,
-            )
-network.add('Transformer', 'UG_TR1', type='myTr2', bus0='UG_BB_20kV', bus1='UG_BB_2kV')
-
-# network.add('Transformer', 'UG_TR1', bus0='UG_BB_20kV', bus1='UG_BB_2kV', s_nom=2, x=0.05916, r=0.01, i0=0.016)
-# network.add('Transformer', 'UG_TR2', bus0='UG_BB_20kV', bus1='UG_BB_2kV', s_nom=2, x=0.05916, r=0.01)
-network.add('Transformer', 'UG_Serv_TR', bus0='UG_BB_2kV', bus1='UG_Serv_BB', s_nom=0.4, x=0.05916, r=0.01)
+network.add('Transformer', 'UG_TR1', type='TR_20-2', bus0='UG_BB_20kV', bus1='UG_BB_2kV')
+network.add('Transformer', 'UG_TR2', type='TR_20-2', bus0='UG_BB_20kV', bus1='UG_BB_2kV')
+network.add('Transformer', 'UG_Serv_TR', type='TR_2-0.4', bus0='UG_BB_2kV', bus1='UG_Serv_BB')
 network.add('Transformer', 'UG_PWM', bus0='UG_BB_2kV', bus1='UG_BB_LVDC', s_nom=0.8, x=1e-12, r=1e-12)
 network.add('Transformer', 'UGS_PWM', bus0='UG_BB_2kV', bus1='UGS_BB', s_nom=0.8, x=1e-12, r=1e-12)
 network.add('Transformer', 'UGS_PV_DC-DC-Conv', bus0='UGS_BB', bus1='UGS_PV_BB', s_nom=0.05, x=1e-12, r=1e-12)
 network.add('Transformer', 'UGS_BESS_DC-DC-Conv', bus0='UGS_BB', bus1='UGS_BESS_Node', s_nom=0.05, x=1e-12, r=1e-12)
 for e in ['UG_TR1',
-          # 'UG_TR2',
+          'UG_TR2',
           'UG_Serv_TR']:
     elements['Transformer'][e] = dict()
 for e in ['UG_PWM', 'UGS_PWM']:
