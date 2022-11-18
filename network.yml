@@ -6,7 +6,7 @@ External Grid:
       level: 20
       type: 'AC'
       links_out:
-        UG_BB_20kv:
+        UG_BB_20kV:
           level: 20
           type: 'AC'
           links_in:
