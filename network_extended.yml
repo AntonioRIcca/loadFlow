@@ -86,6 +86,50 @@ nodes:
     elements:
       UGS_BESS: 'BESS'
 
+  RS_BB_20kV:
+    typology: 'AC'
+    voltage: 20
+    links_up:
+      RS_Line: 'Line'
+    links_side: { }
+    links_down:
+      RS_TR: 'Transformer'
+    elements: { }
+
+  RS_BB_0.4kV:
+    typology: 'AC'
+    voltage: 0.4
+    links_up:
+      RS_TR: 'Transformer'
+    links_side: { }
+    links_down:
+      EV-Charge_Line: 'Line'
+      EV-Fast_PWM: 'PWM'
+    elements: { }
+
+  EV-Charge_BB:
+    typology: 'AC'
+    voltage: 0.4
+    links_up:
+      EV-Charge_Line: 'Line'
+    links_side: { }
+    links_down: { }
+    elements:
+      EV-Charge_Load: 'AC-Load'
+
+  EV-Fast_BB:
+    typology: 'DC'
+    voltage: 0.6
+    links_up:
+      EV-Fast_PWM: 'PWM'
+    links_side: { }
+    links_down: { }
+    elements:
+      EV-Fast_BESS: 'BESS'
+      EV-Fast_PV: 'PV'
+      EV-Fast_Load: 'DC-Load'
+
+
 terminals:
   UG_Serv_AC_Load1:
     typology: 'AC-Load'
@@ -119,9 +163,34 @@ terminals:
     typology: 'ExternalGrid'
     bus: 'City_BB'
 
+  RS_AC-Load1:
+    typology: 'AC-Load'
+    bus: 'RS_BB_0.4kV'
+
+  RS_AC-Load2:
+    typology: 'AC-Load'
+    bus: 'RS_BB_0.4kV'
+
+  EV-Charge_Load:
+    typology: 'AC-Load'
+    bus: 'EV-Charge_Load'
+
+  EV-Fast_BESS:
+    typology: 'BESS'
+    bus: 'EV-Fast_BB'
+
+  EV-Fast_PV:
+    typology: 'PV'
+    bus: 'EV-Fast_BB'
+
+  EV-Fast_Load:
+    typology: 'DC-Load'
+    bus: 'EV-Fast_BB'
+
+
 links:
   UG_Line:
-    typology: 'AC-Line'
+    typology: 'Line'
     bus_H: 'City_BB'
     bus_L: 'UG_BB_20kV'
 
@@ -159,3 +228,24 @@ links:
     typology: 'DCDC_Conv'
     bus_H: 'UGS_BB'
     bus_L: 'UGS_BESS_Node'
+
+  RS_Line:
+    typology: 'Line'
+    bus_H: 'City_BB'
+    bus_L: 'RS_BB_20kV'
+
+  RS_TR:
+    typology: 'Transformer'
+    bus_H: 'RS_BB_20kV'
+    bus_L: 'RS_BB_0.4kV'
+
+  EV-Charge_Line:
+    typology: 'Line'
+    bus_H: 'RS_BB_0.4kV'
+    bus_L: 'EV-Charge_BB'
+
+  EV-Fast_PWM:
+    typology: 'PWM'
+    bus_H: 'RS_BB_0.4kV'
+    bus_L: 'EV-Fast_BB'
+
