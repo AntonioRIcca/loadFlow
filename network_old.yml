@@ -1,0 +1,89 @@
+External Grid:
+  name: 'ExtGrid'
+  node:
+    City_BB:
+      feed: 'ExtGrid'
+      level: 20
+      type: 'AC'
+      links_in: None
+      links_side: None
+      links_out:
+        UG_BB_20kV:
+          level: 20
+          type: 'AC'
+          links_in:
+            UG_line: 'line'
+          links_side: None
+          links_out:
+            UG_BB_2kV:
+              level: 2
+              type: 'AC'
+              links_in:
+                UG_TR1: 'Transformer'
+                UG_TR2: 'Transformer'
+              links_side: none
+              links_out:
+                UG_BB_LVDC:
+                  level: 1.5
+                  type: 'DC'
+                  links_in:
+                    UG_PWM: 'PWM'
+                  links_side: None
+                  links_out: {}
+                  elements:
+                    UG_Load: 'Load'
+
+                UGS_BB:
+                  level: 1.5
+                  type: 'DC'
+                  links_in:
+                    UGS_PWM: 'PWM'
+                  links_side: None
+                  links_out:
+                    UGS_PV_BB:
+                      level: 0.75
+                      type: 'DC'
+                      links_in:
+                        UGS_PV_DC-DC-Conv: 'DCDC_Conv'
+                      links_side: None
+                      links_out: {}
+                      elements:
+                        UGS_PV1: 'PV'
+                        UGS_PV2: 'PV'
+
+                    UGS_BESS_Node:
+                      level: 0.75
+                      type: 'DC'
+                      links_in:
+                        UGS_BESS_DC-DC-Conv: 'DCDC_Conv'
+                      links_side: None
+                      links_out: {}
+                      elements:
+                        UGS_BESS: 'BESS'
+
+                UG_Serv_BB:
+                  level: 0.4
+                  type: 'AC'
+                  links_in:
+                    UG_Serv_TR: 'Transformer'
+                  links_side: None
+                  links_out: {}
+                  elements:
+                    UG_SERV_AC-Load1: 'Load'
+                    UG_SERV_AC-Load2: 'Load'
+      #
+      #
+      #  RS_BB_20kV:
+      #    level: 20
+      #    type: 'AC'
+      #    links_in:
+      #      RS_line: 'line'
+      #    side: none
+      #
+      #  RES-WPG_BB:
+      #    level: 20
+      #    type: 'AC'
+      #    links_in:
+      #      Res_Line: 'line'
+      #    side: none
+      #
