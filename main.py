@@ -64,6 +64,7 @@ for i in range (0, 3):
 # print(network.buses_t.v_ang * 180 / np.pi)
 #
 print(network.buses_t.v_mag_pu)
+print('END')
 #
 # print('valore = ' + str(network.buses_t['p']['My bus 1']['now']))
 #
